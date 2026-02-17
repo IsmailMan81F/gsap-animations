@@ -1,35 +1,41 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/all";
+import { useEffect, useRef } from "react";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const scrollRef = useRef();
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  useEffect(
+    () => {
+      const boxes = gsap.utils.toArray(scrollRef.current.children);
+      boxes.forEach((box) => {
+        gsap.to(box, {
+          x: 300,
+          rotate: 360,
+          borderRadius: "50%",
+          scale: 20,
+          scrollTrigger: {
+            trigger: box,
+            start: "bottom bottom",
+            end: "top top",
+            scrub: 0.5,
+          },
+        });
+      });
+    },
+    { scope: scrollRef },
+  );
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="pl-5 pt-[900px] h-[2000px] overflow-x-hidden">
+      <div className="flex flex-col gap-5" ref={scrollRef}>
+        <div className="box w-20 h-20 bg-green-400 shadow-md shadow-green-500/60"></div>
+        <div className="box w-20 h-20 bg-amber-600 shadow-md shadow-orange-500/60"></div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
